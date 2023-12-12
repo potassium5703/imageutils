@@ -42,5 +42,5 @@ func Scale(img image.Image, scale int) image.Image {
 	if scale < 1 {
 		scale = 1
 	}
-	return rescaled{img, scale}	
+	return rescaled{img, scale}
 }
