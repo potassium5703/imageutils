@@ -5,18 +5,18 @@ import (
 	"image/color"
 )
 
-type resized struct {
+type rescaled struct {
 	src   image.Image
 	scale int
 }
 
 // ColorModel implements image.Image interface
-func (r resized) ColorModel() color.Model {
+func (r rescaled) ColorModel() color.Model {
 	return r.src.ColorModel()
 }
 
 // Bounds implements image.Image interface
-func (r resized) Bounds() image.Rectangle {
+func (r rescaled) Bounds() image.Rectangle {
 	b := r.src.Bounds()
 	return image.Rectangle{
 		Min: image.Point{
@@ -31,16 +31,16 @@ func (r resized) Bounds() image.Rectangle {
 }
 
 // At implements image.Image interface
-func (r resized) At(x, y int) color.Color {
+func (r rescaled) At(x, y int) color.Color {
 	return r.src.At(x/r.scale, y/r.scale)
 }
 
-// Resize resizes image to a given scale
-// and then returns image.
+// Scale scales image.Image to a given scale
+// and then returns image.Image.
 // For now it will work only with positive integers.
-func Resize(img image.Image, scale int) image.Image {
+func Scale(img image.Image, scale int) image.Image {
 	if scale < 1 {
 		scale = 1
 	}
-	return resized{img, scale}	
+	return rescaled{img, scale}	
 }
