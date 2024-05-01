@@ -1,5 +1,3 @@
-//go:build todo
-
 package imageutils
 
 import (
