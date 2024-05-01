@@ -66,7 +66,7 @@ func (p pair) At(x, y int) color.Color {
 			image.ZP, draw.Src,
 		)
 		draw.Draw(
-			rgbaImg, p.Bounds(),
+			rgbaImg, p.first.Bounds(),
 			p.first,
 			image.Point{
 				p.second.Bounds().Dx(),
@@ -81,7 +81,7 @@ func (p pair) At(x, y int) color.Color {
 			image.ZP, draw.Src,
 		)
 		draw.Draw(
-			rgbaImg, p.Bounds(),
+			rgbaImg, p.first.Bounds(),
 			p.second,
 			image.Point{
 				p.first.Bounds().Dx(),
