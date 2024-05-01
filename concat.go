@@ -91,31 +91,31 @@ func (p pair) At(x, y int) color.Color {
 		)
 	case Up:
 		draw.Draw(
-			rgbaImg, rgbaImg.Bounds()
+			rgbaImg, rgbaImg.Bounds(),
 			p.first,
-			image.ZP, draw.Src
+			image.ZP, draw.Src,
 		)
 		draw.Draw(
 			rgbaImg, p.Bounds(),
 			p.second,
 			image.Point{
 				0,
-				p.first.Bounds().Dy()
+				p.first.Bounds().Dy(),
 			},
 			draw.Src,
 		)
 	case Down:
 		draw.Draw(
-			rgbaImg, rgbaImg.Bounds()
+			rgbaImg, rgbaImg.Bounds(),
 			p.second,
-			image.ZP, draw.Src
+			image.ZP, draw.Src,
 		)
 		draw.Draw(
 			rgbaImg, p.Bounds(),
 			p.first,
 			image.Point{
 				0,
-				p.second.Bounds().Dy()
+				p.second.Bounds().Dy(),
 			},
 			draw.Src,
 		)
