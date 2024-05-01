@@ -87,7 +87,7 @@ func (p pair) At(x, y int) color.Color {
 				p.first.Bounds().Dx(),
 				0,
 			},
-			draw.Src,
+			draw.Over,
 		)
 	case Up:
 		draw.Draw(
