@@ -10,7 +10,7 @@ type Side int
 
 const (
 	Left Side = iota
-	Right 
+	Right
 	Up
 	Down
 )
@@ -29,101 +29,98 @@ func (p pair) Bounds() image.Rectangle {
 		b2 = p.second.Bounds()
 	)
 
-	rect := image.Rectangle{}
+	point := image.Point{}
 	switch p.side {
 	case Left:
 		fallthrough
 	case Right:
-		rect = image.Rectangle{
-			image.ZP,
-			image.Point{
-				X: b1.Dx() + b2.Dx(),
-				Y: max(b1.Dy(), b2.Dy()),
-			},
+		point = image.Point{
+			X: b1.Dx() + b2.Dx(),
+			Y: max(b1.Dy(), b2.Dy()),
 		}
 	case Up:
 		fallthrough
 	case Down:
-		rect = image.Rectangle{
-			image.ZP,
-			image.Point{
-				X: max(b1.Dx(), b2.Dx()),
-				Y: b1.Dy() + b2.Dy(),
-			},
+		point = image.Point{
+			X: max(b1.Dx(), b2.Dx()),
+			Y: b1.Dy() + b2.Dy(),
 		}
 	}
-	return rect
+	return image.Rectangle{
+		image.ZP,
+		point,
+	}
 }
 
 func (p pair) At(x, y int) color.Color {
-	rgbaImg := image.NewRGBA(p.Bounds())
+	img := image.NewRGBA(p.Bounds())
 
+	point := image.Point{}
 	switch p.side {
 	case Left:
-		draw.Draw(
-			rgbaImg, rgbaImg.Bounds(),
-			p.second,
-			image.ZP, draw.Src,
-		)
-		draw.Draw(
-			rgbaImg, p.first.Bounds(),
-			p.first,
-			image.Point{
-				p.second.Bounds().Dx(),
-				0,
-			},
-			draw.Src,
-		)
+		p.first, p.second = p.second, p.first
+		fallthrough
 	case Right:
-		draw.Draw(
-			rgbaImg, rgbaImg.Bounds(),
-			p.first,
-			image.ZP, draw.Src,
-		)
-		draw.Draw(
-			rgbaImg, p.first.Bounds(),
-			p.second,
-			image.Point{
-				p.first.Bounds().Dx(),
-				0,
-			},
-			draw.Over,
-		)
+		point = image.Point{-p.first.Bounds().Dx(), 0}
 	case Up:
-		draw.Draw(
-			rgbaImg, rgbaImg.Bounds(),
-			p.first,
-			image.ZP, draw.Src,
-		)
-		draw.Draw(
-			rgbaImg, p.Bounds(),
-			p.second,
-			image.Point{
-				0,
-				p.first.Bounds().Dy(),
-			},
-			draw.Src,
-		)
+		p.first, p.second = p.second, p.first
+		fallthrough
 	case Down:
-		draw.Draw(
-			rgbaImg, rgbaImg.Bounds(),
-			p.second,
-			image.ZP, draw.Src,
-		)
-		draw.Draw(
-			rgbaImg, p.Bounds(),
-			p.first,
-			image.Point{
-				0,
-				p.second.Bounds().Dy(),
-			},
-			draw.Src,
-		)
+		point = image.Point{0, -p.first.Bounds().Dy()}
 	}
-	return rgbaImg.At(x, y)
+	// draw main
+	draw.Draw(
+		img, img.Bounds(),
+		p.first,
+		image.ZP, draw.Src,
+	)
+
+	// draw second
+	draw.Draw(
+		img, p.Bounds(),
+		p.second,
+		point,
+		draw.Src,
+	)
+
+	return img.At(x, y)
+}
+
+func render(p pair) image.Image {
+	img := image.NewRGBA(p.Bounds())
+
+	point := image.Point{}
+	switch p.side {
+	case Left:
+		p.first, p.second = p.second, p.first
+		fallthrough
+	case Right:
+		point = image.Point{-p.first.Bounds().Dx(), 0}
+	case Up:
+		p.first, p.second = p.second, p.first
+		fallthrough
+	case Down:
+		point = image.Point{0, -p.first.Bounds().Dy()}
+	}
+	// draw main
+	draw.Draw(
+		img, img.Bounds(),
+		p.first,
+		image.ZP, draw.Src,
+	)
+
+	// draw second
+	draw.Draw(
+		img, p.Bounds(),
+		p.second,
+		point,
+		draw.Src,
+	)
+
+	return img
 }
 
 // Concat concatenates second image on a given side.
 func Concat(i1, i2 image.Image, s Side) image.Image {
-	return pair{i1, i2, s}
+	return render(pair{i1, i2, s})
 }
